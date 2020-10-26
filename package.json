@@ -1,0 +1,20 @@
+{
+  "name": "mrb-labo-jsmorpionpoo",
+  "version": "1.0.0",
+  "description": "A training exercice in jS - Tic-Tac-Toe in JS",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "game",
+    "poo",
+    "tic-tac-toe"
+  ],
+  "author": "fran-qui-code",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.5",
+    "express": "^4.17.1"
+  }
+}
