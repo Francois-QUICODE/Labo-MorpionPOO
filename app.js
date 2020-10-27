@@ -1,14 +1,15 @@
 const express = require('express');
-const ejs = require('ejs');
-
 
 const app = express();
 const port = 3001;
 
+app.set('views', './assets/views');
+app.set('view engine', 'ejs');
+
 app.get('/', (req, res) => {
-    res.send('Ca Marche !!!'); 
+    res.render('page/home'); 
 });
 
 app.listen(port, () => {
-    console.log(` Application lancée sur le port ${port}`);
+    console.log(` Application lancée  : http://localhost:${port}`);
 })
