@@ -1,3 +1,18 @@
-<% include 'templates/head' %>
+<%- include('../templates/head') %>
 
-<body></body>
+<body>
+  <div class="game">
+    <form action="/tictactoe">
+      <label for="size">Taille du plateau</label>
+      <input type="number" name="size" id="size" min="3" max="25" value="3" />
+      <label for="goal">Nombre a aligner pour gagner</label>
+      <select name="goal" id="goal">
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+      <label for="submit">Jouer !</label>
+      <input type="submit" name="submit" value="C'est parti !!!" />
+    </form>
+  </div>
+</body>
