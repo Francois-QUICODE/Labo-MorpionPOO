@@ -6,10 +6,18 @@ const port = 3001;
 app.set('views', './assets/views');
 app.set('view engine', 'ejs');
 
-app.use(express.static('assets'))
+app.use(express.static('assets'));
+app.use('/assets', express.static(__dirname + '/assets'));
 
 app.get('/', (req, res) => {
-    res.render('pages/home');     
+    res.render('pages/home', {
+        styles: [
+            {
+                path: 'css/style.css'
+            }
+
+        ]
+    });
 });
 
 app.get('/tictactoe', (req, res) => {
@@ -17,16 +25,18 @@ app.get('/tictactoe', (req, res) => {
         size: req.query.size,
         goal: req.query.goal,
         scripts: [
-        {
-            path: 'scripts/main.js',
-            type: 'module'
-        }, 
-        {
-            path: 'scripts/modules/board.js',
-            type: 'module'
-        }
-    
-        ]})
+            {
+                path: 'scripts/main.js',
+                type: 'module'
+            }
+        ],
+        styles: [
+            {
+                path: 'css/style.css'
+            }
+
+        ]
+    })
 })
 
 app.listen(port, () => {
