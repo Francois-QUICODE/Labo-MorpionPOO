@@ -38,10 +38,25 @@ export default class Cell {
         if (this.player === null) {
             this.player = player;
             this.render.setAttribute('data-player', `${this.player}`);
+            return true;
         } else {
             console.log("This cell is not empty, try another cell...");
+            return false;
         }
-        return true;
+
+    }
+    /**
+     *Compare this cell player to the another cell player
+     *
+     * @param {Cell} anotherCell
+     * @memberof Cell
+     */
+    compareCellPlayerTo(anotherCell) {
+        if (this.player === anotherCell.player) {
+            return true
+        } else {
+            return false
+        }
     }
 
 }

@@ -59,14 +59,15 @@ export default class Board {
     }
 
     listen(element) {
-        element.addEventListener("click", (event) => {
-            window.debug ? console.log(event.target.attributes) : false;
+        element.addEventListener("mousedown", (event) => {
             let targetCell = {};
-            targetCell.posx = event.target.dataset.posx;
-            targetCell.posy = event.target.dataset.posy;
-            console.log(targetCell);
-            this.cells[targetCell.posx][targetCell.posy].changePlayer(this.actualPlayer);
-            this.actualPlayer = this.switchToNextPlayer(this.actualPlayer);
+            targetCell.posX = event.target.dataset.posx;
+            targetCell.posY = event.target.dataset.posy;
+            console.log(typeof targetCell.posX);
+            let chosenCell = this.cells[targetCell.posX][targetCell.posY]
+            let cellHasChanged = chosenCell.changePlayer(this.actualPlayer);
+            this.checkVictoryVertical(chosenCell, 5);
+            cellHasChanged ? this.actualPlayer = this.switchToNextPlayer(this.actualPlayer) : false;
         })
 
     }
@@ -74,14 +75,46 @@ export default class Board {
     switchToNextPlayer(actualPlayer) {
         switch (actualPlayer) {
             case "X":
-                return "Y";
+                return "O";
 
-            case "Y":
+            case "O":
                 return "X";
 
             default:
                 break;
         }
+    }
+
+    /**
+     *
+     *
+     * @param {Cell} targetCell cell who's just played
+     * @param {number} goal
+     * @memberof Board
+     */
+    checkVictoryVertical(targetCell, goal) {
+        let samePlayerCellsCount = 0;
+        for (let i = 0; i < goal; i++) {
+            const comparedCell = this.cells[targetCell.posX + i][targetCell.posY]
+            if (targetCell.compareCellPlayerTo(comparedCell)) {
+                samePlayerCellsCount += 1;
+            } else {
+                break;
+            }
+        }
+        for (let i = 0; i < goal; i++) {
+            const comparedCell = this.cells[targetCell.posX - i][targetCell.posY]
+            if (targetCell.compareCellPlayerTo(comparedCell)) {
+                samePlayerCellsCount += 1;
+            } else {
+                break;
+            }
+        }
+        if (samePlayerCellsCount === goal) {
+            console.log("Victoire");
+        }
+        console.log(samePlayerCellsCount);
+
     }
 
 }

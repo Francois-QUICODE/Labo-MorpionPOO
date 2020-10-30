@@ -8,14 +8,18 @@
 }
 
 .board {
-  background-color: blueviolet;
   display: grid;
   justify-content: space-between;
   margin: auto;
+  user-select: none;
 }
 
 .cell[data-player=X] {
   background-color: #f22;
+}
+
+.cell[data-player=O] {
+  background-color: #2f2;
 }
 
 /*# sourceMappingURL=style.css.map */
