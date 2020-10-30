@@ -24,11 +24,15 @@ export default class Board {
         this.render = this.render(destination);
         console.log("Board created.");
         for (let i = 0; i < size; i++) {
+            let subArray = [];
             for (let j = 0; j < size; j++) {
-                this.cells.push(new Cell(i, j, this.render, cellPxSize));
+                subArray.push(new Cell(i, j, this.render, cellPxSize));
             }
+            this.cells.push(subArray);
         }
         console.log("Board Hydrated");
+        console.log(this.cells);
+        this.listen(this.render);
     }
 
     render(destination) {
@@ -38,7 +42,7 @@ export default class Board {
         render.style.gridTemplateColumns = this.autoGridCalc(this.size);
         render.style.width = this.sizeGridCalc(this.size, this.cellPxSize)
         destination.appendChild(render);
-        return render
+        return render;
     }
 
     autoGridCalc(size) {
@@ -51,6 +55,14 @@ export default class Board {
 
     sizeGridCalc(size, cellSize) {
         return size * cellSize + "px";
+    }
+
+    listen(element) {
+        element.addEventListener("click", (event) => {
+            console.log(event.target);
+
+        })
+
     }
 
 }
