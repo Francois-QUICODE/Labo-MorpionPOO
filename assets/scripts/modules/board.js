@@ -15,31 +15,36 @@ export default class Board {
      * @memberof Board
      */
     constructor(size, destinationQuerySelector, cellPxSize) {
-        /** @type {Element} */
 
+        /** @type {Element} */
         const destination = document.querySelector(destinationQuerySelector)
         this.size = size;
         this.cells = [];
-        const render = document.createElement("div");
-        this.render = render;
-        render.setAttribute('class', 'board');
-        render.setAttribute('data-size', `${this.size}`);
-        render.style.gridTemplateColumns = this.autoGridCalc(this.size);
-        render.style.width = this.sizeGridCalc(this.size, cellPxSize)
-        destination.appendChild(render);
+        this.cellPxSize = cellPxSize;
+        this.render = this.render(destination);
         console.log("Board created.");
         for (let i = 0; i < size; i++) {
             for (let j = 0; j < size; j++) {
                 this.cells.push(new Cell(i, j, this.render, cellPxSize));
             }
         }
+        console.log("Board Hydrated");
+    }
+
+    render(destination) {
+        const render = document.createElement("div");
+        render.setAttribute('class', 'board');
+        render.setAttribute('data-size', `${this.size}`);
+        render.style.gridTemplateColumns = this.autoGridCalc(this.size);
+        render.style.width = this.sizeGridCalc(this.size, this.cellPxSize)
+        destination.appendChild(render);
+        return render
     }
 
     autoGridCalc(size) {
         let gtc = "";
         for (let i = 0; i < size; i++) {
-            gtc += "auto "
-            console.log(gtc)
+            gtc += "auto ";
         }
         return gtc;
     }
