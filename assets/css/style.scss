@@ -13,3 +13,7 @@
   justify-content: space-between;
   margin: auto;
 }
+
+.cell[data-player="X"] {
+  background-color: #f22;
+}

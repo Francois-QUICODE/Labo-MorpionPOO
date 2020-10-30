@@ -14,4 +14,8 @@
   margin: auto;
 }
 
+.cell[data-player=X] {
+  background-color: #f22;
+}
+
 /*# sourceMappingURL=style.css.map */

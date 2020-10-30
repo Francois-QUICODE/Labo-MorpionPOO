@@ -22,7 +22,8 @@ export default class Board {
         this.cells = [];
         this.cellPxSize = cellPxSize;
         this.render = this.render(destination);
-        console.log("Board created.");
+        this.actualPlayer = "X";
+        window.debug ? console.log("Board created.") : false;
         for (let i = 0; i < size; i++) {
             let subArray = [];
             for (let j = 0; j < size; j++) {
@@ -30,8 +31,8 @@ export default class Board {
             }
             this.cells.push(subArray);
         }
-        console.log("Board Hydrated");
-        console.log(this.cells);
+        window.debug ? console.log("Board Hydrated") : false;
+        window.debug ? console.log(this.cells) : false;
         this.listen(this.render);
     }
 
@@ -59,10 +60,28 @@ export default class Board {
 
     listen(element) {
         element.addEventListener("click", (event) => {
-            console.log(event.target);
-
+            window.debug ? console.log(event.target.attributes) : false;
+            let targetCell = {};
+            targetCell.posx = event.target.dataset.posx;
+            targetCell.posy = event.target.dataset.posy;
+            console.log(targetCell);
+            this.cells[targetCell.posx][targetCell.posy].changePlayer(this.actualPlayer);
+            this.actualPlayer = this.switchToNextPlayer(this.actualPlayer);
         })
 
+    }
+
+    switchToNextPlayer(actualPlayer) {
+        switch (actualPlayer) {
+            case "X":
+                return "Y";
+
+            case "Y":
+                return "X";
+
+            default:
+                break;
+        }
     }
 
 }

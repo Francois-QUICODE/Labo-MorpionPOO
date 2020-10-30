@@ -11,8 +11,8 @@ export default class Cell {
         this.posY = y;
         this.player = null;
         this.size = size;
-        this.render(destination, this.size)
-        console.log(`New cell created : X = ${this.posX}, Y= ${this.posY}, cells size ${this.size} px`);
+        this.render = this.render(destination, this.size)
+        window.debug ? console.log(`New cell created : X = ${this.posX}, Y= ${this.posY}, cells size ${this.size} px`) : false;
     }
 
     /**
@@ -31,9 +31,17 @@ export default class Cell {
         destination.appendChild(render);
         render.style.width = `${size}px`;
         render.style.height = `${size}px`;
-        render.addEventListener('click', (event) => {
-            console.log(event);
-        })
+        return render;
+    }
+
+    changePlayer(player) {
+        if (this.player === null) {
+            this.player = player;
+            this.render.setAttribute('data-player', `${this.player}`);
+        } else {
+            console.log("This cell is not empty, try another cell...");
+        }
+        return true;
     }
 
 }
