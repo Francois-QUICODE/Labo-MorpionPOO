@@ -23,7 +23,12 @@ export default class Board {
         this.cellPxSize = cellPxSize;
         this.render = this.render(destination);
         this.actualPlayer = "X";
-        window.debug ? console.log("Board created.") : false;
+        this.goal = parseInt(document.querySelector('#goal').dataset.value);
+
+
+        window.debug ? console.log(`${this.goal}`) : false;
+
+        // window.debug ? console.log("Board created.") : false;
         for (let i = 0; i < size; i++) {
             let subArray = [];
             for (let j = 0; j < size; j++) {
@@ -31,8 +36,8 @@ export default class Board {
             }
             this.cells.push(subArray);
         }
-        window.debug ? console.log("Board Hydrated") : false;
-        window.debug ? console.log(this.cells) : false;
+        // window.debug ? console.log("Board Hydrated") : false;
+        // window.debug ? console.log(this.cells) : false;
         this.listen(this.render);
     }
 
@@ -63,10 +68,10 @@ export default class Board {
             let targetCell = {};
             targetCell.posX = event.target.dataset.posx;
             targetCell.posY = event.target.dataset.posy;
-            console.log(typeof targetCell.posX);
-            let chosenCell = this.cells[targetCell.posX][targetCell.posY]
-            let cellHasChanged = chosenCell.changePlayer(this.actualPlayer);
-            this.checkVictoryVertical(chosenCell, 5);
+            let playedCell = this.cells[targetCell.posX][targetCell.posY]
+            let cellHasChanged = playedCell.changePlayer(this.actualPlayer);
+            this.checkVictoryVertical(playedCell, this.goal);
+            this.checkVictoryHorizontal(playedCell, this.goal);
             cellHasChanged ? this.actualPlayer = this.switchToNextPlayer(this.actualPlayer) : false;
         })
 
@@ -86,35 +91,87 @@ export default class Board {
     }
 
     /**
+     *Check victory Vertically
      *
-     *
-     * @param {Cell} targetCell cell who's just played
+     * @param {Cell} playedCell cell who's just played
      * @param {number} goal
      * @memberof Board
      */
-    checkVictoryVertical(targetCell, goal) {
-        let samePlayerCellsCount = 0;
-        for (let i = 0; i < goal; i++) {
-            const comparedCell = this.cells[targetCell.posX + i][targetCell.posY]
-            if (targetCell.compareCellPlayerTo(comparedCell)) {
-                samePlayerCellsCount += 1;
-            } else {
-                break;
+    checkVictoryVertical(playedCell, goal) {
+        let samePlayerCellsCount = 1;
+        for (let i = 1; i < goal; i++) {
+            const comparedCell = this.cells[playedCell.posX + i][playedCell.posY]
+            if (typeof comparedCell !== undefined) {
+                if (playedCell.compareCellPlayerTo(comparedCell) && samePlayerCellsCount < goal) {
+                    samePlayerCellsCount += 1;
+                } else {
+                    break;
+                }
             }
         }
-        for (let i = 0; i < goal; i++) {
-            const comparedCell = this.cells[targetCell.posX - i][targetCell.posY]
-            if (targetCell.compareCellPlayerTo(comparedCell)) {
-                samePlayerCellsCount += 1;
-            } else {
-                break;
+        for (let i = 1; i < goal; i++) {
+            const comparedCell = this.cells[playedCell.posX - i][playedCell.posY]
+            if (typeof comparedCell !== undefined) {
+                if (playedCell.compareCellPlayerTo(comparedCell) && samePlayerCellsCount < goal) {
+                    samePlayerCellsCount += 1;
+                } else {
+                    break;
+                }
             }
         }
+
+        console.log(`Horizontal : ${samePlayerCellsCount}`);
+
         if (samePlayerCellsCount === goal) {
-            console.log("Victoire");
+            console.log("%c ----Victoire----", "color:red; font-size:12px");
+            return true;
+        } else {
+            return false;
         }
-        console.log(samePlayerCellsCount);
 
     }
 
+    /**
+     *Check victory Horizontally
+     *
+     * @param {Cell} playedCell cell who's just played
+     * @param {number} goal
+     * @memberof Board
+     */
+
+    checkVictoryHorizontal(playedCell, goal) {
+        let samePlayerCellsCount = 1;
+        for (let i = 1; i < goal; i++) {
+            const comparedCell = this.cells[playedCell.posX][playedCell.posY + i];
+            if (typeof comparedCell !== undefined) {
+                if (playedCell.compareCellPlayerTo(comparedCell) && samePlayerCellsCount < goal) {
+                    //compare to the right direction
+                    samePlayerCellsCount += 1;
+                } else {
+                    break;
+                }
+            }
+        }
+        for (let i = 1; i < goal; i++) {
+            if (typeof comparedCell !== undefined) {
+                const comparedCell = this.cells[playedCell.posX][playedCell.posY - i]
+                if (playedCell.compareCellPlayerTo(comparedCell) && samePlayerCellsCount < goal) {
+                    //compare to the left direction
+                    samePlayerCellsCount += 1;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        console.log(`Horizontal : ${samePlayerCellsCount}`);
+
+        if (samePlayerCellsCount === goal) {
+            console.log("%c ----Victoire----", "color:red; font-size:12px");
+            return true;
+        } else {
+            return false;
+        }
+
+    }
 }

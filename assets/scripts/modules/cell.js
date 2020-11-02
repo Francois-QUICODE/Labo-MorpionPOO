@@ -12,7 +12,7 @@ export default class Cell {
         this.player = null;
         this.size = size;
         this.render = this.render(destination, this.size)
-        window.debug ? console.log(`New cell created : X = ${this.posX}, Y= ${this.posY}, cells size ${this.size} px`) : false;
+        // window.debug ? console.log(`New cell created : X = ${this.posX}, Y= ${this.posY}, cells size ${this.size} px`) : false;
     }
 
     /**
@@ -52,11 +52,16 @@ export default class Cell {
      * @memberof Cell
      */
     compareCellPlayerTo(anotherCell) {
-        if (this.player === anotherCell.player) {
-            return true
+        if (anotherCell !== undefined) {
+            if (this.player === anotherCell.player) {
+                return true;
+            } else {
+                return false;
+            }
         } else {
-            return false
+            return false;
         }
+
     }
 
 }
