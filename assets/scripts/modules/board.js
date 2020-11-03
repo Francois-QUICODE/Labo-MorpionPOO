@@ -23,7 +23,7 @@ export default class Board {
         this.cellPxSize = cellPxSize;
         this.render = this.render(destination);
         this.actualPlayer = "X";
-        this.goal = parseInt(document.querySelector('#goal').dataset.value);
+        this.goal = parseInt(document.querySelector("#goal").dataset.value);
 
 
         window.debug ? console.log(`${this.goal}`) : false;
@@ -43,8 +43,8 @@ export default class Board {
 
     render(destination) {
         const render = document.createElement("div");
-        render.setAttribute('class', 'board');
-        render.setAttribute('data-size', `${this.size}`);
+        render.setAttribute("class", "board");
+        render.setAttribute("data-size", `${this.size}`);
         render.style.gridTemplateColumns = this.autoGridCalc(this.size);
         render.style.width = this.sizeGridCalc(this.size, this.cellPxSize)
         destination.appendChild(render);
@@ -70,8 +70,11 @@ export default class Board {
             targetCell.posY = event.target.dataset.posy;
             let playedCell = this.cells[targetCell.posX][targetCell.posY]
             let cellHasChanged = playedCell.changePlayer(this.actualPlayer);
-            this.checkVictoryVertical(playedCell, this.goal);
-            this.checkVictoryHorizontal(playedCell, this.goal);
+            /**
+                            this.checkVictoryVertical(playedCell, this.goal);
+                            this.checkVictoryHorizontal(playedCell, this.goal);
+            */
+            this.checkVictory(playedCell, this.goal)
             cellHasChanged ? this.actualPlayer = this.switchToNextPlayer(this.actualPlayer) : false;
         })
 
@@ -93,7 +96,7 @@ export default class Board {
     /**
      *Check victory Vertically
      *
-     * @param {Cell} playedCell cell who's just played
+     * @param {Cell} playedCell cell who"s just played
      * @param {number} goal
      * @memberof Board
      */
@@ -134,7 +137,7 @@ export default class Board {
     /**
      *Check victory Horizontally
      *
-     * @param {Cell} playedCell cell who's just played
+     * @param {Cell} playedCell cell who"s just played
      * @param {number} goal
      * @memberof Board
      */
@@ -172,6 +175,103 @@ export default class Board {
         } else {
             return false;
         }
+    }
+
+
+    /**
+     *Check victory
+     *
+     * @param {Cell} playedCell cell who"s just played
+     * @param {number} goal
+     * @memberof Board
+     */
+
+    checkVictory(playedCell, goal) {
+
+        const verificationArray = [
+            {
+                "orientation": "horizontal",
+                "directions": {
+                    "firstDirection": {
+                        "xMod": 0,
+                        "yMod": 1
+                    },
+                    "secondDirection": {
+                        "xMod": 0,
+                        "yMod": -1
+                    }
+                }
+            },
+            {
+                "orientation": "vertical",
+                "directions": {
+                    "firstDirection": {
+                        "xMod": 1,
+                        "yMod": 0
+                    },
+                    "secondDirection": {
+                        "xMod": -1,
+                        "yMod": 0
+                    }
+                }
+            },
+            {
+                "orientation": "diagonalUp",
+                "directions": {
+                    "firstDirection": {
+                        "xMod": 1,
+                        "yMod": 1
+                    },
+                    "secondDirection": {
+                        "xMod": -1,
+                        "yMod": -1
+                    }
+                }
+            },
+            {
+                "orientation": "diagonalDown",
+                "directions":
+                {
+                    "firstDirection": {
+                        "xMod": 1,
+                        "yMod": -1
+                    },
+                    "secondDirection": {
+                        "xMod": -1,
+                        "yMod": 1
+                    }
+                }
+            }
+        ]
+
+        console.log(verificationArray)
+
+        for (const verification of verificationArray) {
+            let samePlayerCellsCount = 1;
+            for (const direction in verification.directions) {
+                console.log(direction);
+                console.log(direction.xMod);
+                for (let i = 1; i < goal; i++) {
+                    const comparedCell = this.cells[playedCell.posX + direction.xMod][playedCell.posY + direction.yMod];
+                    if (typeof comparedCell !== undefined) {
+                        if (playedCell.compareCellPlayerTo(comparedCell) && samePlayerCellsCount < goal) {
+                            //compare to the right direction
+                            samePlayerCellsCount += 1;
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            }
+            if (samePlayerCellsCount === goal) {
+                console.log("%c ----Victoire----", "color:red; font-size:12px");
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+
 
     }
 }
