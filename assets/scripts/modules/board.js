@@ -70,11 +70,10 @@ export default class Board {
             targetCell.posY = event.target.dataset.posy;
             let playedCell = this.cells[targetCell.posX][targetCell.posY]
             let cellHasChanged = playedCell.changePlayer(this.actualPlayer);
-            /**
-                            this.checkVictoryVertical(playedCell, this.goal);
-                            this.checkVictoryHorizontal(playedCell, this.goal);
-            */
-            this.checkVictory(playedCell, this.goal)
+            this.checkVictory(playedCell, this.goal) ?
+                console.log('%c -----Victory-----', 'color: red') :
+                false;
+
             cellHasChanged ? this.actualPlayer = this.switchToNextPlayer(this.actualPlayer) : false;
         })
 
@@ -94,16 +93,94 @@ export default class Board {
     }
 
     /**
+     *Check if a cell exists relatively at a played cell
+     *
+     * @param {Cell} playedCell
+     * @param {number} i - i value in the loop
+     * @param {number} X - -1, 0, 1
+     * @param {number} Y - -1, 0, 1
+     * @return {Cell} 
+     * @memberof Board
+     */
+
+    checkExistingCell(playedCell, i, X, Y) {
+        console.log("---Check existing Cell---");
+        console.log(this.cells[playedCell.posX + i * X]);
+
+        if (this.cells[playedCell.posX + i * X] !== undefined) {
+            console.log("%c X = OK", "color: chartreuse");
+            if (this.cells[playedCell.posX + i * X][playedCell.posY + i * Y] !== undefined) {
+                console.log("%c Y = OK", "color: chartreuse");
+                return this.cells[playedCell.posX + i * X][playedCell.posY + i * Y]
+            } else {
+                console.log("%c Y = KO", "color: pink");
+                return undefined;
+            }
+        } else {
+            console.log("%c X = KO", "color: pink");
+            return undefined;
+        }
+
+
+
+
+
+    }
+
+    /**
      *Check victory Vertically
      *
      * @param {Cell} playedCell cell who"s just played
      * @param {number} goal
      * @memberof Board
      */
+
     checkVictoryVertical(playedCell, goal) {
         let samePlayerCellsCount = 1;
         for (let i = 1; i < goal; i++) {
-            const comparedCell = this.cells[playedCell.posX + i][playedCell.posY]
+            const comparedCell = this.checkExistingCell(playedCell, i, +1, 0)
+            if (typeof comparedCell !== undefined) {
+                if (playedCell.compareCellPlayerTo(comparedCell) && samePlayerCellsCount < goal) {
+                    samePlayerCellsCount += 1;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        for (let i = 1; i < goal; i++) {
+            const comparedCell = this.checkExistingCell(playedCell, i, -1, 0)
+            if (typeof comparedCell !== undefined) {
+                if (playedCell.compareCellPlayerTo(comparedCell) && samePlayerCellsCount < goal) {
+                    samePlayerCellsCount += 1;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        console.log(`%c Ver : ${samePlayerCellsCount}`, "color: green;");
+
+        if (samePlayerCellsCount === goal) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     *Check victory up-diagonally
+     *
+     * @param {Cell} playedCell cell who"s just played
+     * @param {number} goal
+     * @memberof Board
+     */
+    checkVictoryDiagonalUp(playedCell, goal) {
+        let samePlayerCellsCount = 1;
+        /** @type {Cell} */
+
+        for (let i = 1; i < goal; i++) {
+            const comparedCell = this.checkExistingCell(playedCell, i, 1, 1)
             if (typeof comparedCell !== undefined) {
                 if (playedCell.compareCellPlayerTo(comparedCell) && samePlayerCellsCount < goal) {
                     samePlayerCellsCount += 1;
@@ -113,7 +190,7 @@ export default class Board {
             }
         }
         for (let i = 1; i < goal; i++) {
-            const comparedCell = this.cells[playedCell.posX - i][playedCell.posY]
+            const comparedCell = this.checkExistingCell(playedCell, i, -1, -1)
             if (typeof comparedCell !== undefined) {
                 if (playedCell.compareCellPlayerTo(comparedCell) && samePlayerCellsCount < goal) {
                     samePlayerCellsCount += 1;
@@ -123,10 +200,49 @@ export default class Board {
             }
         }
 
-        console.log(`Horizontal : ${samePlayerCellsCount}`);
+        console.log(`%c UD : ${samePlayerCellsCount}`, "color: green;");
 
         if (samePlayerCellsCount === goal) {
-            console.log("%c ----Victoire----", "color:red; font-size:12px");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    /**
+     *Check victory down-diagonally
+     *
+     * @param {Cell} playedCell cell who"s just played
+     * @param {number} goal
+     * @memberof Board
+     */
+    checkVictoryDiagonalDown(playedCell, goal) {
+        let samePlayerCellsCount = 1;
+        for (let i = 1; i < goal; i++) {
+            const comparedCell = this.checkExistingCell(playedCell, i, -1, 1);
+            if (typeof comparedCell !== undefined) {
+                if (playedCell.compareCellPlayerTo(comparedCell) && samePlayerCellsCount < goal) {
+                    samePlayerCellsCount += 1;
+                } else {
+                    break;
+                }
+            }
+        }
+        for (let i = 1; i < goal; i++) {
+            const comparedCell = this.checkExistingCell(playedCell, i, 1, -1)
+            if (typeof comparedCell !== undefined) {
+                if (playedCell.compareCellPlayerTo(comparedCell) && samePlayerCellsCount < goal) {
+                    samePlayerCellsCount += 1;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        console.log(`%c DD : ${samePlayerCellsCount}`, "color: green;");
+
+        if (samePlayerCellsCount === goal) {
             return true;
         } else {
             return false;
@@ -145,7 +261,7 @@ export default class Board {
     checkVictoryHorizontal(playedCell, goal) {
         let samePlayerCellsCount = 1;
         for (let i = 1; i < goal; i++) {
-            const comparedCell = this.cells[playedCell.posX][playedCell.posY + i];
+            const comparedCell = this.checkExistingCell(playedCell, i, 0, 1)
             if (typeof comparedCell !== undefined) {
                 if (playedCell.compareCellPlayerTo(comparedCell) && samePlayerCellsCount < goal) {
                     //compare to the right direction
@@ -156,8 +272,9 @@ export default class Board {
             }
         }
         for (let i = 1; i < goal; i++) {
+
             if (typeof comparedCell !== undefined) {
-                const comparedCell = this.cells[playedCell.posX][playedCell.posY - i]
+                const comparedCell = this.checkExistingCell(playedCell, i, 0, -1)
                 if (playedCell.compareCellPlayerTo(comparedCell) && samePlayerCellsCount < goal) {
                     //compare to the left direction
                     samePlayerCellsCount += 1;
@@ -167,10 +284,9 @@ export default class Board {
             }
         }
 
-        console.log(`Horizontal : ${samePlayerCellsCount}`);
+        console.log(`%c Hor : ${samePlayerCellsCount}`, "color: green;");
 
         if (samePlayerCellsCount === goal) {
-            console.log("%c ----Victoire----", "color:red; font-size:12px");
             return true;
         } else {
             return false;
@@ -188,90 +304,102 @@ export default class Board {
 
     checkVictory(playedCell, goal) {
 
-        const verificationArray = [
-            {
-                "orientation": "horizontal",
-                "directions": {
-                    "firstDirection": {
-                        "xMod": 0,
-                        "yMod": 1
-                    },
-                    "secondDirection": {
-                        "xMod": 0,
-                        "yMod": -1
-                    }
-                }
-            },
-            {
-                "orientation": "vertical",
-                "directions": {
-                    "firstDirection": {
-                        "xMod": 1,
-                        "yMod": 0
-                    },
-                    "secondDirection": {
-                        "xMod": -1,
-                        "yMod": 0
-                    }
-                }
-            },
-            {
-                "orientation": "diagonalUp",
-                "directions": {
-                    "firstDirection": {
-                        "xMod": 1,
-                        "yMod": 1
-                    },
-                    "secondDirection": {
-                        "xMod": -1,
-                        "yMod": -1
-                    }
-                }
-            },
-            {
-                "orientation": "diagonalDown",
-                "directions":
-                {
-                    "firstDirection": {
-                        "xMod": 1,
-                        "yMod": -1
-                    },
-                    "secondDirection": {
-                        "xMod": -1,
-                        "yMod": 1
-                    }
-                }
-            }
-        ]
-
-        console.log(verificationArray)
-
-        for (const verification of verificationArray) {
-            let samePlayerCellsCount = 1;
-            for (const direction in verification.directions) {
-                console.log(direction);
-                console.log(direction.xMod);
-                for (let i = 1; i < goal; i++) {
-                    const comparedCell = this.cells[playedCell.posX + direction.xMod][playedCell.posY + direction.yMod];
-                    if (typeof comparedCell !== undefined) {
-                        if (playedCell.compareCellPlayerTo(comparedCell) && samePlayerCellsCount < goal) {
-                            //compare to the right direction
-                            samePlayerCellsCount += 1;
-                        } else {
-                            break;
-                        }
-                    }
-                }
-            }
-            if (samePlayerCellsCount === goal) {
-                console.log("%c ----Victoire----", "color:red; font-size:12px");
-                return true;
-            } else {
-                return false;
-            }
+        if (this.checkVictoryDiagonalDown(playedCell, goal) ||
+            this.checkVictoryDiagonalUp(playedCell, goal) ||
+            this.checkVictoryHorizontal(playedCell, goal) ||
+            this.checkVictoryVertical(playedCell, goal)) {
+            return true
+        } else {
+            return false;
         }
 
-
-
+        /** TODO: Use a json to male all verifications with only one method
+                    const verificationArray = [
+                        {
+                            "orientation": "horizontal",
+                            "directions": [
+                                {
+                                    "firstDirection": {
+                                        "xMod": 0,
+                                        "yMod": 1
+                                    }
+                                },
+                                {
+                                    "secondDirection": {
+                                        "xMod": 0,
+                                        "yMod": -1
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "orientation": "vertical",
+                            "directions": [
+                                {
+                                    "firstDirection": {
+                                        "xMod": 1,
+                                        "yMod": 0
+                                    }
+                                },
+                                {
+                                    "secondDirection": {
+                                        "xMod": -1,
+                                        "yMod": 0
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "orientation": "diagonalUp",
+                            "directions": [
+                                {
+                                    "firstDirection": {
+                                        "xMod": 1,
+                                        "yMod": 1
+                                    }
+                                },
+                                {
+                                    "secondDirection": {
+                                        "xMod": -1,
+                                        "yMod": -1
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "orientation": "diagonalDown",
+                            "directions":
+                                [
+                                    {
+                                        "firstDirection": {
+                                            "xMod": 1,
+                                            "yMod": -1
+                                        }
+                                    },
+                                    {
+                                        "secondDirection": {
+                                            "xMod": -1,
+                                            "yMod": 1
+                                        }
+                                    }
+                                ]
+                        }
+                    ]
+            
+                    function getJson(dir) {
+                        verificationArray.forEach(res => {
+            
+                            if (dir === res.orientation) {
+                                return res.directions;
+                            }
+            
+                            return res;
+                        });
+                    }
+            
+                    console.log(getJson("horizontal").firstDirection.xMod);
+        */
     }
+
+
 }
