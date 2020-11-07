@@ -5,6 +5,7 @@
 
 .game {
   background-color: #ffeecf;
+  padding: 2em;
 }
 
 .board {
@@ -20,6 +21,20 @@
 
 .cell[data-player=O] {
   background-color: #2f2;
+}
+
+.victory {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 10;
+  font-size: 4em;
+  background-color: #e55;
+  transform: translate(-50%, -50%);
+  padding: 1em;
+  margin: auto;
+  text-align: center;
+  pointer-events: none;
 }
 
 /*# sourceMappingURL=style.css.map */

@@ -12,5 +12,5 @@ window.onload = () => {
 
     window.debug ? console.log(`size : ${size}, goal : ${goal}`) : false;
 
-    const board = new Board(size, ".game", cellsSize);
+    new Board(size, ".game", cellsSize, ".message-panel");
 }

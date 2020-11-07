@@ -1,4 +1,5 @@
 import Cell from "./cell.js";
+import Message from "./message.js";
 /**
  *Board ClassS
  *
@@ -9,12 +10,13 @@ export default class Board {
 
     /**
      * Creates an instance of Board.
-     * @param {Number} size number of rows and columns
-     * @param {String} destinationQuerySelector query selector write like in css files
-     * @param {Number} cellPxSize size of cells, will be converted in pixels
+     * @param {Number} size - number of rows and columns
+     * @param {String} destinationQuerySelector - query selector write like in css files
+     * @param {Number} cellPxSize - size of cells, will be converted in pixels
+     * @param {String} messageLocation - Css selector for messages
      * @memberof Board
      */
-    constructor(size, destinationQuerySelector, cellPxSize) {
+    constructor(size, destinationQuerySelector, cellPxSize, messageLocation) {
 
         /** @type {Element} */
         const destination = document.querySelector(destinationQuerySelector)
@@ -24,11 +26,8 @@ export default class Board {
         this.render = this.render(destination);
         this.actualPlayer = "X";
         this.goal = parseInt(document.querySelector("#goal").dataset.value);
+        this.messageLocation = messageLocation
 
-
-        window.debug ? console.log(`${this.goal}`) : false;
-
-        // window.debug ? console.log("Board created.") : false;
         for (let i = 0; i < size; i++) {
             let subArray = [];
             for (let j = 0; j < size; j++) {
@@ -69,9 +68,10 @@ export default class Board {
             targetCell.posX = event.target.dataset.posx;
             targetCell.posY = event.target.dataset.posy;
             let playedCell = this.cells[targetCell.posX][targetCell.posY]
-            let cellHasChanged = playedCell.changePlayer(this.actualPlayer);
+            let cellHasChanged = playedCell.changePlayer(this.actualPlayer, this.messageLocation);
+
             this.checkVictory(playedCell, this.goal) ?
-                console.log('%c -----Victory-----', 'color: red') :
+                new Message(this.messageLocation, `And the winner is : ${this.actualPlayer}`, 'victory', 2000) :
                 false;
 
             cellHasChanged ? this.actualPlayer = this.switchToNextPlayer(this.actualPlayer) : false;
@@ -104,20 +104,18 @@ export default class Board {
      */
 
     checkExistingCell(playedCell, i, X, Y) {
-        console.log("---Check existing Cell---");
-        console.log(this.cells[playedCell.posX + i * X]);
 
         if (this.cells[playedCell.posX + i * X] !== undefined) {
-            console.log("%c X = OK", "color: chartreuse");
+            //console.log("%c X = OK", "color: chartreuse");
             if (this.cells[playedCell.posX + i * X][playedCell.posY + i * Y] !== undefined) {
-                console.log("%c Y = OK", "color: chartreuse");
+                //console.log("%c Y = OK", "color: chartreuse");
                 return this.cells[playedCell.posX + i * X][playedCell.posY + i * Y]
             } else {
-                console.log("%c Y = KO", "color: pink");
+                //console.log("%c Y = KO", "color: pink");
                 return undefined;
             }
         } else {
-            console.log("%c X = KO", "color: pink");
+            //console.log("%c X = KO", "color: pink");
             return undefined;
         }
 
@@ -159,7 +157,7 @@ export default class Board {
             }
         }
 
-        console.log(`%c Ver : ${samePlayerCellsCount}`, "color: green;");
+        //console.log(`%c Ver : ${samePlayerCellsCount}`, "color: green;");
 
         if (samePlayerCellsCount === goal) {
             return true;
@@ -200,7 +198,7 @@ export default class Board {
             }
         }
 
-        console.log(`%c UD : ${samePlayerCellsCount}`, "color: green;");
+        //console.log(`%c UD : ${samePlayerCellsCount}`, "color: green;");
 
         if (samePlayerCellsCount === goal) {
             return true;
@@ -240,7 +238,7 @@ export default class Board {
             }
         }
 
-        console.log(`%c DD : ${samePlayerCellsCount}`, "color: green;");
+        //console.log(`%c DD : ${samePlayerCellsCount}`, "color: green;");
 
         if (samePlayerCellsCount === goal) {
             return true;
@@ -284,7 +282,7 @@ export default class Board {
             }
         }
 
-        console.log(`%c Hor : ${samePlayerCellsCount}`, "color: green;");
+        //console.log(`%c Hor : ${samePlayerCellsCount}`, "color: green;");
 
         if (samePlayerCellsCount === goal) {
             return true;
@@ -313,92 +311,91 @@ export default class Board {
             return false;
         }
 
-        /** TODO: Use a json to male all verifications with only one method
-                    const verificationArray = [
+        //TODO: Use a json to male all verifications with only one method
+        /**
+        const verificationArray = [
+            {
+                "orientation": "horizontal",
+                "directions": [
+                    {
+                        "firstDirection": {
+                            "xMod": 0,
+                            "yMod": 1
+                        }
+                    },
+                    {
+                        "secondDirection": {
+                            "xMod": 0,
+                            "yMod": -1
+                        }
+                    }
+                ]
+            },
+            {
+                "orientation": "vertical",
+                "directions": [
+                    {
+                        "firstDirection": {
+                            "xMod": 1,
+                            "yMod": 0
+                        }
+                    },
+                    {
+                        "secondDirection": {
+                            "xMod": -1,
+                            "yMod": 0
+                        }
+                    }
+                ]
+            },
+            {
+                "orientation": "diagonalUp",
+                "directions": [
+                    {
+                        "firstDirection": {
+                            "xMod": 1,
+                            "yMod": 1
+                        }
+                    },
+                    {
+                        "secondDirection": {
+                            "xMod": -1,
+                            "yMod": -1
+                        }
+                    }
+                ]
+            },
+            {
+                "orientation": "diagonalDown",
+                "directions":
+                    [
                         {
-                            "orientation": "horizontal",
-                            "directions": [
-                                {
-                                    "firstDirection": {
-                                        "xMod": 0,
-                                        "yMod": 1
-                                    }
-                                },
-                                {
-                                    "secondDirection": {
-                                        "xMod": 0,
-                                        "yMod": -1
-                                    }
-                                }
-                            ]
+                            "firstDirection": {
+                                "xMod": 1,
+                                "yMod": -1
+                            }
                         },
                         {
-                            "orientation": "vertical",
-                            "directions": [
-                                {
-                                    "firstDirection": {
-                                        "xMod": 1,
-                                        "yMod": 0
-                                    }
-                                },
-                                {
-                                    "secondDirection": {
-                                        "xMod": -1,
-                                        "yMod": 0
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "orientation": "diagonalUp",
-                            "directions": [
-                                {
-                                    "firstDirection": {
-                                        "xMod": 1,
-                                        "yMod": 1
-                                    }
-                                },
-                                {
-                                    "secondDirection": {
-                                        "xMod": -1,
-                                        "yMod": -1
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "orientation": "diagonalDown",
-                            "directions":
-                                [
-                                    {
-                                        "firstDirection": {
-                                            "xMod": 1,
-                                            "yMod": -1
-                                        }
-                                    },
-                                    {
-                                        "secondDirection": {
-                                            "xMod": -1,
-                                            "yMod": 1
-                                        }
-                                    }
-                                ]
+                            "secondDirection": {
+                                "xMod": -1,
+                                "yMod": 1
+                            }
                         }
                     ]
-            
-                    function getJson(dir) {
-                        verificationArray.forEach(res => {
-            
-                            if (dir === res.orientation) {
-                                return res.directions;
-                            }
-            
-                            return res;
-                        });
-                    }
-            
-                    console.log(getJson("horizontal").firstDirection.xMod);
-        */
+            }
+        ]
+ 
+        function getJson(dir) {
+            verificationArray.forEach(res => {
+ 
+                if (dir === res.orientation) {
+                    return res.directions;
+                }
+ 
+                return res;
+            });
+        }
+*/
     }
 
 

@@ -1,3 +1,4 @@
+import Message from './message.js';
 export default class Cell {
     /**
      * @param {number} x
@@ -34,13 +35,21 @@ export default class Cell {
         return render;
     }
 
-    changePlayer(player) {
+    /**
+     *
+     *
+     * @param {*} player
+     * @param {String} messageContainer - CSS class for message location
+     * @return {boolean} 
+     * @memberof Cell
+     */
+    changePlayer(player, messageContainer) {
         if (this.player === null) {
             this.player = player;
             this.render.setAttribute('data-player', `${this.player}`);
             return true;
         } else {
-            console.log("This cell is not empty, try another cell...");
+            new Message(messageContainer, "This cell is not empty, try another cell...", ".not-empty", 2500);
             return false;
         }
 

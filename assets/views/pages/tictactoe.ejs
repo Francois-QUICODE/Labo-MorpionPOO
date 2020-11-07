@@ -11,6 +11,7 @@
     </h2>
   </header>
   <div class="game"></div>
+  <div class="message-panel"></div>
   <% if ( typeof scripts !== 'undefined') { scripts.forEach( (script) => { %>
   <script src="/<%- script.path %>" type="<%- script.type %>"></script>
   <% }); %> <% } %>
