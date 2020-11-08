@@ -59,7 +59,7 @@ export default class Board {
     }
 
     sizeGridCalc(size, cellSize) {
-        return size * cellSize + "px";
+        return size * cellSize + "vw";
     }
 
     listen(element) {
@@ -71,7 +71,7 @@ export default class Board {
             let cellHasChanged = playedCell.changePlayer(this.actualPlayer, this.messageLocation);
 
             this.checkVictory(playedCell, this.goal) ?
-                new Message(this.messageLocation, `And the winner is : ${this.actualPlayer}`, 'victory', 2000) :
+                new Message(this.messageLocation, `And the winner is : ${this.actualPlayer}`, 'victory') :
                 false;
 
             cellHasChanged ? this.actualPlayer = this.switchToNextPlayer(this.actualPlayer) : false;

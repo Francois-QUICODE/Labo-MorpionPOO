@@ -13,13 +13,18 @@ export default class Message {
         const element = document.createElement("p");
         cleanHtmlElement(container);
         element.innerHTML = message;
-        element.setAttribute("class", htmlClass);
+        element.classList.add('message');
+        element.classList.add(htmlClass)
         container.appendChild(element);
 
         if (delay !== undefined) {
             setInterval(() => {
                 cleanHtmlElement(container);
             }, delay);
+        } else {
+            container.addEventListener("click", () => {
+                cleanHtmlElement(container);
+            })
         }
 
         function cleanHtmlElement(element) {

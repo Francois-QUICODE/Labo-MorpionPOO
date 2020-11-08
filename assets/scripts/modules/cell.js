@@ -49,7 +49,7 @@ export default class Cell {
             this.render.setAttribute('data-player', `${this.player}`);
             return true;
         } else {
-            new Message(messageContainer, "This cell is not empty, try another cell...", ".not-empty", 2500);
+            new Message(messageContainer, "This cell is not empty, try another cell...", "not-empty", 2500);
             return false;
         }
 

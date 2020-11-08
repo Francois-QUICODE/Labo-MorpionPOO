@@ -8,7 +8,7 @@ window.onload = () => {
 
     const size = document.querySelector('#size').getAttribute('data-value');
     const goal = document.querySelector('#goal').getAttribute('data-value');
-    const cellsSize = 50
+    const cellsSize = 30
 
     window.debug ? console.log(`size : ${size}, goal : ${goal}`) : false;
 
