@@ -24,6 +24,5 @@ window.onload = () => {
  */
 function cellsSizeOptimizer(boardSize, targetDiv) {
     const div = document.querySelector(targetDiv);
-    console.log(div.clientHeight);
     return div.clientWidth / boardSize;
 }

@@ -24,19 +24,19 @@ export default class Board {
         this.cells = [];
         this.cellPxSize = cellPxSize;
         this.render = this.render(destination);
-        this.actualPlayer = "X";
+        this.actualPlayer = "Red square";
         this.goal = parseInt(document.querySelector("#goal").dataset.value);
-        this.messageLocation = messageLocation
+        this.messageLocation = messageLocation;
+        this.cellsQuantity = 0;
 
         for (let i = 0; i < size; i++) {
             let subArray = [];
             for (let j = 0; j < size; j++) {
                 subArray.push(new Cell(i, j, this.render, cellPxSize));
+                this.cellsQuantity++;
             }
             this.cells.push(subArray);
         }
-        // window.debug ? console.log("Board Hydrated") : false;
-        // window.debug ? console.log(this.cells) : false;
         this.listen(this.render);
     }
 
@@ -69,11 +69,7 @@ export default class Board {
             targetCell.posY = event.target.dataset.posy;
             let playedCell = this.cells[targetCell.posX][targetCell.posY]
             let cellHasChanged = playedCell.changePlayer(this.actualPlayer, this.messageLocation);
-
-            this.checkVictory(playedCell, this.goal) ?
-                new Message(this.messageLocation, `And the winner is : ${this.actualPlayer}`, 'victory') :
-                false;
-
+            this.checkEndOfTheGame(playedCell);
             cellHasChanged ? this.actualPlayer = this.switchToNextPlayer(this.actualPlayer) : false;
         })
 
@@ -81,11 +77,11 @@ export default class Board {
 
     switchToNextPlayer(actualPlayer) {
         switch (actualPlayer) {
-            case "X":
-                return "O";
+            case "Red square":
+                return "Lime circle";
 
-            case "O":
-                return "X";
+            case "Lime circle":
+                return "Red square";
 
             default:
                 break;
@@ -93,7 +89,7 @@ export default class Board {
     }
 
     /**
-     *Check if a cell exists relatively at a played cell
+     *Check if a cell exists relatively at the played cell
      *
      * @param {Cell} playedCell
      * @param {number} i - i value in the loop
@@ -106,23 +102,14 @@ export default class Board {
     checkExistingCell(playedCell, i, X, Y) {
 
         if (this.cells[playedCell.posX + i * X] !== undefined) {
-            //console.log("%c X = OK", "color: chartreuse");
             if (this.cells[playedCell.posX + i * X][playedCell.posY + i * Y] !== undefined) {
-                //console.log("%c Y = OK", "color: chartreuse");
                 return this.cells[playedCell.posX + i * X][playedCell.posY + i * Y]
             } else {
-                //console.log("%c Y = KO", "color: pink");
                 return undefined;
             }
         } else {
-            //console.log("%c X = KO", "color: pink");
             return undefined;
         }
-
-
-
-
-
     }
 
     /**
@@ -156,8 +143,6 @@ export default class Board {
                 }
             }
         }
-
-        //console.log(`%c Ver : ${samePlayerCellsCount}`, "color: green;");
 
         if (samePlayerCellsCount === goal) {
             return true;
@@ -198,8 +183,6 @@ export default class Board {
             }
         }
 
-        //console.log(`%c UD : ${samePlayerCellsCount}`, "color: green;");
-
         if (samePlayerCellsCount === goal) {
             return true;
         } else {
@@ -237,8 +220,6 @@ export default class Board {
                 }
             }
         }
-
-        //console.log(`%c DD : ${samePlayerCellsCount}`, "color: green;");
 
         if (samePlayerCellsCount === goal) {
             return true;
@@ -282,8 +263,6 @@ export default class Board {
             }
         }
 
-        //console.log(`%c Hor : ${samePlayerCellsCount}`, "color: green;");
-
         if (samePlayerCellsCount === goal) {
             return true;
         } else {
@@ -310,93 +289,31 @@ export default class Board {
         } else {
             return false;
         }
-
-        //TODO: Use a json to male all verifications with only one method
-        /**
-        const verificationArray = [
-            {
-                "orientation": "horizontal",
-                "directions": [
-                    {
-                        "firstDirection": {
-                            "xMod": 0,
-                            "yMod": 1
-                        }
-                    },
-                    {
-                        "secondDirection": {
-                            "xMod": 0,
-                            "yMod": -1
-                        }
-                    }
-                ]
-            },
-            {
-                "orientation": "vertical",
-                "directions": [
-                    {
-                        "firstDirection": {
-                            "xMod": 1,
-                            "yMod": 0
-                        }
-                    },
-                    {
-                        "secondDirection": {
-                            "xMod": -1,
-                            "yMod": 0
-                        }
-                    }
-                ]
-            },
-            {
-                "orientation": "diagonalUp",
-                "directions": [
-                    {
-                        "firstDirection": {
-                            "xMod": 1,
-                            "yMod": 1
-                        }
-                    },
-                    {
-                        "secondDirection": {
-                            "xMod": -1,
-                            "yMod": -1
-                        }
-                    }
-                ]
-            },
-            {
-                "orientation": "diagonalDown",
-                "directions":
-                    [
-                        {
-                            "firstDirection": {
-                                "xMod": 1,
-                                "yMod": -1
-                            }
-                        },
-                        {
-                            "secondDirection": {
-                                "xMod": -1,
-                                "yMod": 1
-                            }
-                        }
-                    ]
-            }
-        ]
- 
-        function getJson(dir) {
-            verificationArray.forEach(res => {
- 
-                if (dir === res.orientation) {
-                    return res.directions;
-                }
- 
-                return res;
-            });
-        }
-*/
     }
 
+    checkFullBoard() {
+        let playedCellCount = 0;
+        for (const row of this.cells) {
+            for (const cell of row) {
+                cell.player !== null ? playedCellCount++ : false;
+            }
+        }
+        return playedCellCount === this.cellsQuantity;
+    }
+
+
+
+    /**
+     *Check if the game ending after a check victory and check if board is full
+     *
+     * @memberof Board
+     */
+    checkEndOfTheGame(playedCell) {
+        if (this.checkVictory(playedCell, this.goal)) {
+            new Message(this.messageLocation, ` Victory of the player : ${this.actualPlayer}`, "victory", undefined, false, [{ 'text': 'Change Configuration', 'link': './' }]);
+        } else if (this.checkFullBoard()) {
+            new Message(this.messageLocation, "The Board is full !!!", "victory", undefined, false, [{ 'text': 'Change Configuration', 'link': './' }]);
+        }
+    }
 
 }
