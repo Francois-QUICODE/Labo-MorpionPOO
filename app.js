@@ -1,7 +1,7 @@
 const express = require('express');
 
 const app = express();
-const port = 3001;
+const port = 3000;
 
 app.set('views', './assets/views');
 app.set('view engine', 'ejs');

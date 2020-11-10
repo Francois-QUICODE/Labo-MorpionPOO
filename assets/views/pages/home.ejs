@@ -4,15 +4,48 @@
   <div class="game">
     <form action="/tictactoe">
       <label for="size">Taille du plateau</label>
-      <input type="number" name="size" id="size" min="3" max="25" value="3" />
-      <label for="goal">Nombre a aligner pour gagner</label>
+      <input type="range" name="size" id="size" min="3" max="25" step="1" value="3"/><p id="sizeCount">3</p><br>
+      <label for="goal">Nombre à aligner pour gagner</label>
       <select name="goal" id="goal">
         <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-      </select>
-      <label for="submit">Jouer !</label>
-      <input type="submit" name="submit" value="C'est parti !!!" />
+      </select><br>
+      <label for="submit"></label>Jouer !</label>
+    
+      
+      <input type="submit" name="submit" value="C'est parti !!!"/>
     </form>
   </div>
+  <script>
+    document.querySelector("#size").addEventListener("input", () => {
+      const select = document.querySelector("#goal");
+      const boardSize = document.querySelector("#size").value;
+      const sizeCount = document.querySelector("#sizeCount");
+
+      sizeCount.innerHTML = boardSize;
+
+      console.log(boardSize);
+
+      while (select.firstChild) {
+                select.removeChild(select.lastChild);
+            }
+
+      function createOptionElement(value) {
+        let option = document.createElement("option");
+        option.setAttribute("value",value);
+        option.innerText = value;
+        select.appendChild(option);
+      }
+
+      if (boardSize >= 3) {
+        createOptionElement('3');
+      }
+      if (boardSize >= 4) {
+        createOptionElement('4');
+      }
+      if (boardSize >= 5) {
+        createOptionElement('5');
+      }
+
+    })
+  </script>
 </body>

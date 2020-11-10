@@ -1,7 +1,7 @@
 <%- include('../templates/head') %>
 
 <body>
-  <header>
+  <header style="visibility: hidden">
     <h1>Tic, Tac, Toe</h1>
     <h2 id="size" data-value="<%= size %>">
       Taille : <%= size %> X <%= size %>
@@ -10,7 +10,7 @@
       Condition de victoire : <%= goal %>
     </h2>
   </header>
-  <div class="game"></div>
+  <div class="game" id="game"></div>
   <div class="message-panel"></div>
   <% if ( typeof scripts !== 'undefined') { scripts.forEach( (script) => { %>
   <script src="/<%- script.path %>" type="<%- script.type %>"></script>

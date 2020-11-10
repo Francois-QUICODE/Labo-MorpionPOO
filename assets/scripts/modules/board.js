@@ -59,7 +59,7 @@ export default class Board {
     }
 
     sizeGridCalc(size, cellSize) {
-        return size * cellSize + "vw";
+        return size * cellSize + "px";
     }
 
     listen(element) {
